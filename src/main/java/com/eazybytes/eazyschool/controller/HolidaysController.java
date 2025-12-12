@@ -3,7 +3,9 @@ package com.eazybytes.eazyschool.controller;
 import com.eazybytes.eazyschool.models.Holiday;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,8 +15,11 @@ import java.util.stream.Collectors;
 @Controller
 public class HolidaysController {
 
-    @RequestMapping("/holidays")
-    public String displayHolidayPage(Model model) {
+    @RequestMapping("/holidays/{display}")
+    public String displayHolidayPage(@PathVariable String display, boolean federal,
+                                     Model model) {
+        model.addAttribute("festival", display != null && (display.equals("festival") || display.equals("all")));
+        model.addAttribute("federal", display != null && (display.equals("federal") || display.equals("all")));
         List<Holiday> holidays = Arrays.asList(
                 new Holiday(" Jan 1 ", "New Year's Day", Holiday.Type.FESTIVAL),
                 new Holiday(" Oct 31 ", "Hallowen", Holiday.Type.FESTIVAL),

@@ -2,14 +2,13 @@ package com.eazybytes.eazyschool.controller;
 
 import com.eazybytes.eazyschool.models.Contact;
 import com.eazybytes.eazyschool.services.ContactService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.logging.Logger;
@@ -27,6 +26,7 @@ public class ContactController {
 
     @RequestMapping("/contact")
     public String displayContactPage(Model model) {
+        model.addAttribute("contact", new Contact());
         return "contact";
     }
 //
@@ -42,8 +42,12 @@ public class ContactController {
 //    }
 
     @RequestMapping(value = "/saveMsg", method = RequestMethod.POST)
-    public ModelAndView SaveMessage(Contact contact) {
+    public String SaveMessage(@Valid @ModelAttribute("contact") Contact contact, Errors errors) {
+        if (errors.hasErrors()) {
+            log.error(errors.getAllErrors().toString());
+            return "contact.html";
+        }
         contactService.saveMessageDetails(contact);
-        return new ModelAndView("redirect:/contact");
+        return "redirect:/contact";
     }
 }
